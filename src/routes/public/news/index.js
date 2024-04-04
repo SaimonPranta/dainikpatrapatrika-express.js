@@ -5,25 +5,24 @@ const router = require("express").Router()
 
 router.get("/", async (req, res) => {
     try {
-        const { category, subcategory } = req.query;
-        const limit = Number(req.query.limit) || 20;
-        console.log("req.query ==>>", req.query)
+        const { category, subcategory, search } = req.query;
+        const limit = Number(req.query.limit) || 20; 
         const query = {}
         if (category && category !== "undefined") {
             query["category"] = category
         }
         if (subcategory && subcategory !== "undefined") {
             query["subcategory"] = subcategory
-        }
-        console.log("query ==>>", query)
-
+        } 
+        if (search && search !== "undefined") {
+            query["$or"] = [{ title: new RegExp(search, "i") }, { description: new RegExp(search, "i") }]
+        } 
         const news = await NewsCollection.find({ ...query }).limit(limit).sort({ createdAt: -1 })
-        console.log("news ==>>", news.length)
         res.json({
             success: true,
             data: news
         })
-    } catch (error) { 
+    } catch (error) {
         res.json({
             message: "Internal server error"
         })
