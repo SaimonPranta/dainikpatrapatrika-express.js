@@ -7,7 +7,7 @@ const path = require("path");
 const { storageRootPath } = require("./shared/constants/variables");
 const app = express()
 const PORT = 5001 || precess.env.PORT
- 
+
 
 // App Configuration
 app.use(cors())
@@ -22,10 +22,12 @@ app.use(express.static(path.join(storageRootPath, "news")))
 
 
 // App Routes
+app.get("/", (req, res) => {
+    res.json({data: "Hello"})
+})
 app.use("/public", require("./routes/public/index"))
 app.use("/admin", require("./routes/admin"))
 
 app.listen(PORT, () => {
     console.log(`Server is running on PORT:${PORT}`)
 })
- 

@@ -5,71 +5,48 @@ const path = require('path');
 const { storageRootPath } = require("../../../shared/constants/variables");
 const newsStorePath = path.join(storageRootPath, "news")
 const fs = require("fs")
+const { getQueries } = require("./utilities")
+
 
 router.get("/", async (req, res) => {
-  try { 
+  try {
+    const limit = 24
     const page = req.query.page || 1
     const search = req.query.search
     const id = req.query.id
-    console.log("HEllo form this is")
-    const pageCount = await NewsCollection.countDocuments()
-console.log("pageCount", pageCount)
-    const limit = 5
-    const combination = limit * Number(page);
-    let skip = pageCount - combination
-    console.log("skip", skip)
-    
-    if (skip < 0) {
-      // skip = 0
-      // return res.json({
-      //   data: [],
-      // })
+    const query = getQueries(search)
+    const totalNews = await NewsCollection.countDocuments()
+    let newsSlice = totalNews / limit
+    if (newsSlice.toString().includes(".")) {
+      const [beforeDot, afterDot] = newsSlice.toString().split(".")
+      if (Number(afterDot) > 0) {
+        newsSlice = Number(beforeDot) + 1
+      }
+
     }
-    // let skip = pageCount - combination
-    // console.log("skip", skip)
-    // if (skip < 0) {
-    //   return res.json({
-    //     data: [],
-    //   })
-    // }
-    if (skip < limit) {
-      skip = 0
+
+    if (newsSlice < page) {
+      return res.json({
+        message: "All news are already loaded",
+      })
     }
-    console.log({
-      page,
-      pageCount,
-      combination,
-      skip
-    })
+    const skip = (newsSlice - page) * limit
+
     let newList = []
-    let query = {}
+
     if (id) {
       newList = await NewsCollection.findOne({ _id: id })
-
     } else if (search) {
-      newList = (await NewsCollection.find({
-        $or: [
-          {
-            title: new RegExp(search, "i")
-          },
-          {
-            category: new RegExp(search, "i")
-          },
-          {
-            subcategory: new RegExp(search, "i")
-          },
-        ]
-      }).skip(skip).limit(limit))
-
+      newList = await NewsCollection.find(query).limit(limit)
     } else {
-      newList = (await NewsCollection.find().skip(skip).limit(limit)).reverse()
+      newList = (await NewsCollection.find({}).skip(skip).limit(limit)).reverse()
     }
+
 
     res.json({
       data: newList,
     })
   } catch (error) {
-    console.log("error", error)
     res.json({
       message: "Internal server error"
     })
@@ -116,15 +93,12 @@ router.put("/", async (req, res) => {
     const data = JSON.parse(req.body.data);
     let image = req.files
     let updateNews = null
-
-    console.log("image", image)
-    console.log("data", data)
     if (image) {
       image = req.files?.img
       const imageExt = path.extname(image.name)
       const imageName = `${image.name.replace(imageExt, "")}_${Date.now()}${getRandomNumber()}${imageExt}`
       image.name = imageName
-      updateNews = await NewsCollection.findOneAndUpdate({ _id: data._id }, { ...data, img: [image.name] }, {new: true})
+      updateNews = await NewsCollection.findOneAndUpdate({ _id: data._id }, { ...data, img: [image.name] }, { new: true })
 
       await Promise.all(data.img.map(async (img) => {
         const imgPath = path.join(newsStorePath, img)
@@ -140,7 +114,7 @@ router.put("/", async (req, res) => {
 
     } else {
       const newsInfo = await new NewsCollection({ ...data })
-      updateNews = await NewsCollection.findOneAndUpdate({ _id: data._id }, { ...data }, {new: true})
+      updateNews = await NewsCollection.findOneAndUpdate({ _id: data._id }, { ...data }, { new: true })
     }
 
 

@@ -18,6 +18,11 @@ const newsSchema = new mongoose.Schema({
   },
   subcategory: {
     type: String,
+  },
+  viewCount: {
+    type: Number,
+    required: true,
+    default: 0
   }
 }, {
   timestamps: true

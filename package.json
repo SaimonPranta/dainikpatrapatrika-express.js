@@ -16,6 +16,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.1",
     "express-fileupload": "^1.5.0",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.2.3",
     "react-redux": "^9.1.0",
     "redux": "^5.0.1"

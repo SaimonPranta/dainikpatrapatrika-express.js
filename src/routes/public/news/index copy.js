@@ -36,33 +36,44 @@ router.get("/sort", async (req, res) => {
     try {
         const { sort } = req.query;
 
+        console.log("sort =>", sort)
         const limit = 24
         const page = req.query.page || 1
         const totalNews = await NewsCollection.countDocuments()
         let newsSlice = totalNews / limit
-     
+        if (newsSlice.toString().includes(".")) {
+            const [beforeDot, afterDot] = newsSlice.toString().split(".")
+            if (Number(afterDot) > 0) {
+                newsSlice = Number(beforeDot) + 1
+            }
 
-        const skip = Number(page - 1) * limit
+        }
+
         
-        if (skip >= totalNews) {
+        if (newsSlice < page) {
             return res.json({
                 message: "All news are already loaded",
             })
         }
+        const skip = (newsSlice - page) * limit
 
         
 
         let newList = []
         if (sort === 'সর্বশেষ') {
-            newList = await NewsCollection.find({}).skip(skip).limit(limit).sort({ createdAt: 1 }).select("title img")
+            newList = (await NewsCollection.find({}).skip(skip).limit(limit).sort({ createdAt: 1 }).select("title img")).reverse()
         } else if(sort === "জনপ্রিয়") {
-            newList = await NewsCollection.find({}).skip(skip).limit(limit).sort({ viewCount: 1 }).select("title img viewCount")
+            newList = (await NewsCollection.find({}).skip(skip).limit(limit).sort({ viewCount: 1 }).select("title img viewCount")).reverse()
         }
+
+console.log("newList",newList.length)
+console.log({
+    newsSlice, page,skip,newList: newList.length, limit
+})
 
         res.json({
             data: newList,
-            page: page,
-            total: totalNews,
+            page: page
         })
     } catch (error) {
         console.log("error==>>", error)
