@@ -32,6 +32,10 @@ router.post("/", async (req, res) => {
         const data = await AdminCollection.findOne({
             mail, password
         })
+        // const data = await AdminCollection.create({
+        //     mail, password
+        // })
+        console.log("data =>", data)
         const token = await jwt.sign({
             mail
         }, process.env.JWT_SECRET_KEY,
