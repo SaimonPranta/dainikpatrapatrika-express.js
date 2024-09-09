@@ -6,6 +6,7 @@
   "npm": "v21.0.0",
   "scripts": {
     "dev": "nodemon src/app.js",
+    "build": "node src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

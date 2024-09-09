@@ -23,7 +23,7 @@ app.use(express.static(path.join(storageRootPath, "news")))
 
 // App Routes
 app.get("/", (req, res) => {
-    res.json({data: "Hello"})
+    res.json({data: "Hey, Server is running."})
 })
 app.use("/public", require("./routes/public/index"))
 app.use("/admin", require("./routes/admin"))
