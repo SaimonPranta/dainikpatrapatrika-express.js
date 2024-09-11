@@ -14,7 +14,6 @@ router.get("/check-token", async (req, res) => {
         const { mail } = await jwt.verify(token, process.env.JWT_SECRET_KEY);
         if (mail) {
             const admin = await AdminCollection.findOne({ mail }).select("mail")
-            console.log("admin =>", admin)
             if (admin) {
                 return res.json({ verified: true, admin })
             }
