@@ -50,14 +50,19 @@ router.get("/sort", async (req, res) => {
             })
         }
 
-        
+        console.log({
+            page,
+            skip,
+            limit
+        })
 
         let newList = []
         if (sort === 'সর্বশেষ') {
-            newList = await NewsCollection.find({}).skip(skip).limit(limit).sort({ createdAt: 1 }).select("title img")
+            newList = await NewsCollection.find({}).skip(skip).limit(limit).sort({ createdAt: -1 }).select("title img")
         } else if(sort === "জনপ্রিয়") {
-            newList = await NewsCollection.find({}).skip(skip).limit(limit).sort({ viewCount: 1 }).select("title img viewCount")
+            newList = await NewsCollection.find({}).skip(skip).limit(limit).sort({ viewCount: -1 }).select("title img viewCount")
         }
+        console.log("newList =>", newList)
 
         res.json({
             data: newList,

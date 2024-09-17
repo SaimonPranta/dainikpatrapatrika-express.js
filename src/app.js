@@ -19,6 +19,7 @@ app.use(fileUpload());
 // Static Routes for Image
 app.use(express.static(path.join(storageRootPath, "news")))
 app.use(express.static(path.join(storageRootPath, "ads")))
+app.use(express.static(path.join(storageRootPath, "employ")))
 
 
 

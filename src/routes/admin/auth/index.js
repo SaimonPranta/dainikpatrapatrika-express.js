@@ -1,6 +1,7 @@
 const router = require("express").Router()
 const AdminCollection = require("../../../DB/Modals/admin")
 const jwt = require("jsonwebtoken")
+const EmployCollection = require("../../../DB/Modals/employ")
 
 
 router.get("/check-token", async (req, res) => {
@@ -13,7 +14,7 @@ router.get("/check-token", async (req, res) => {
 
         const { mail } = await jwt.verify(token, process.env.JWT_SECRET_KEY);
         if (mail) {
-            const admin = await AdminCollection.findOne({ mail }).select("mail")
+            const admin = await EmployCollection.findOne({ email: mail }).select("email")
             if (admin) {
                 return res.json({ verified: true, admin })
             }
@@ -28,13 +29,12 @@ router.get("/check-token", async (req, res) => {
 router.post("/", async (req, res) => {
     try {
         const { mail, password } = req.body;
-        const data = await AdminCollection.findOne({
-            mail, password
+        const data = await EmployCollection.findOne({
+            email: mail, password, position: "editor"
         })
-        // const data = await AdminCollection.create({
-        //     mail, password
+        // const data = await EmployCollection.create({
+        //      email: mail, password
         // })
-        console.log("data =>", data)
         const token = await jwt.sign({
             mail
         }, process.env.JWT_SECRET_KEY,
