@@ -42,6 +42,10 @@ const employSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  panelAccess: {
+    type: Boolean,
+    default: false,
+  },
   password: {
     type: String,
     required: true
