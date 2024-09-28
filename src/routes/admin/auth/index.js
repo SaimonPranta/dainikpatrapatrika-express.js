@@ -14,7 +14,7 @@ router.get("/check-token", async (req, res) => {
 
         const { mail } = await jwt.verify(token, process.env.JWT_SECRET_KEY);
         if (mail) {
-            const admin = await EmployCollection.findOne({ email: mail }).select("email")
+            const admin = await EmployCollection.findOne({ email: mail, panelAccess: true }).select("email")
             if (admin) {
                 return res.json({ verified: true, admin })
             }
@@ -30,7 +30,7 @@ router.post("/", async (req, res) => {
     try {
         const { mail, password } = req.body;
         const data = await EmployCollection.findOne({
-            email: mail, password, position: "editor"
+            email: mail, password, panelAccess: true
         })
         // const data = await EmployCollection.create({
         //      email: mail, password
