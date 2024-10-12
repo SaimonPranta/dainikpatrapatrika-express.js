@@ -19,7 +19,9 @@ async function scrapePerplexity(inputText) {
     const submitButtonId = 'button[aria-label="Submit"]';
 
     const inputValue = `Modify or rewrite this article, don't change its original language:- (${inputText})`
-    await page.waitForSelector(inputFieldId);
+    await waitHere(6);
+  
+    await page.waitForSelector(inputFieldId, { timeout: 60000 })
     await page.type(inputFieldId, inputValue);
 
     await waitHere(3);
@@ -49,3 +51,5 @@ async function scrapePerplexity(inputText) {
 
 // Example usage
 // scrapePerplexity( ট্রলারসহ অন্য মাঝিদের ছেড়ে দেয় মিয়ানমার।').catch(console.error);
+
+module.exports = scrapePerplexity
