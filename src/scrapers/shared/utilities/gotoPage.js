@@ -21,7 +21,11 @@ const gotoPage = async (url) => {
   await page.waitForSelector('html', { timeout: 600000 });
 
   await autoScroll(page);
+<<<<<<< HEAD
 
+=======
+  global.browser = browser
+>>>>>>> a958d26563b202e1c43501243603c245f68dbf69
   return { page, browser };
 };
 
