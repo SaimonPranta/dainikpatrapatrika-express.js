@@ -3,7 +3,6 @@ const cors = require("cors")
 const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
 require("./DB/connections")
-require("./scrapers/index")
 const path = require("path");
 const { storageRootPath } = require("./shared/constants/variables");
 const app = express()
